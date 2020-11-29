@@ -35,11 +35,11 @@ public class Anagram {
 
         public static class AnagramAggregatorReducer
                 extends Reducer<Text, Text, Text, Text> {
-            Text anagramlist=new Text();
             public void reduce(Text key, Iterable<Text> values,
                                Context context
             ) throws IOException, InterruptedException {
                 // Collection<Text> anagrams = new HashSet<Text>();
+                Text anagramlist=new Text();
                 String anagram = "";
 
                 for (Text val : values) {
@@ -58,7 +58,7 @@ public class Anagram {
 
         public static void main(String[] args) throws Exception {
             Configuration conf = new Configuration();
-            Job job = Job.getInstance(conf, "word count");
+            Job job = Job.getInstance(conf, "anagram");
             job.setJarByClass(Anagram.class);
             job.setMapperClass(AnagramMakerMapper.class);
             job.setReducerClass(AnagramAggregatorReducer.class);
