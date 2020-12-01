@@ -25,14 +25,25 @@ public class Anagram {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
+            ArrayList<String> stopwords =new ArrayList<String>(Arrays.asList("'tis","'twas","a","able","about","across","after","ain't","all","almost","also","am","among","an","and","any","are","aren't","as","at","be","because","been","but","by","can","can't","cannot","could","could've","couldn't","dear","did","didn't","do","does","doesn't","don't","either","else","ever","every","for","from","get","got","had","has","hasn't","have","he","he'd","he'll","he's","her","hers","him","his","how","how'd","how'll","how's","however","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","just","least","let","like","likely","may","me","might","might've","mightn't","most","must","must've","mustn't","my","neither","no","nor","not","of","off","often","on","only","or","other","our","own","rather","said","say","says","shan't","she","she'd","she'll","she's","should","should've","shouldn't","since","so","some","than","that","that'll","that's","the","their","them","then","there","there's","these","they","they'd","they'll","they're","they've","this","tis","to","too","twas","us","wants","was","wasn't","we","we'd","we'll","we're","were","weren't","what","what'd","what's","when","when","when'd","when'll","when's","where","where'd","where'll","where's","which","while","who","who'd","who'll","who's","whom","why","why'd","why'll","why's","will","with","won't","would","would've","wouldn't","yet","you","you'd","you'll","you're","you've","your"));
+            ArrayList<String> listOfWords = new ArrayList<String>();
+
             StringTokenizer itr = new StringTokenizer(value.toString());
 
             while (itr.hasMoreTokens()) {
                 String word = itr.nextToken().replace(',', ' ');
-                char[] arr = word.toCharArray();
-                Arrays.sort(arr);
-                String wordKey = new String(arr);
-                context.write(new Text(wordKey), new Text(word));
+                for (String sword : stopwords) {
+                    String wordc = word.toLowerCase();
+                    if (!stopwords.contains(wordc)) {
+                        listOfWords.add(sword);
+                    }
+                }
+                for (String newword : listOfWords) {
+                    char[] arr = newword.toCharArray();
+                    Arrays.sort(arr);
+                    String wordKey = new String(arr);
+                    context.write(new Text(wordKey), new Text(newword));
+                }
             }
         }
     }
@@ -61,6 +72,14 @@ public class Anagram {
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
             String alistsort =String.join(",",alist);
+            StringBuffer sb=new StringBuffer();
+            /*for(String s : anagram){
+                sb.append(s);
+                sb.append("");
+            }
+            String str =sb.toString();
+            */
+
             if(newtoken.countTokens()>=2) {
                 anagramlist.set(alistsort);
                 context.write(key,anagramlist);
@@ -85,6 +104,5 @@ public class Anagram {
     }
 
 }
-
 
 
