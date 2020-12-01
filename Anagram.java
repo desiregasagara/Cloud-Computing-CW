@@ -64,13 +64,14 @@ public class Anagram {
                             @Override
                             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
                                 return o1.get(0).compareTo(o2.get(0));
+
                             }
             });
             }
 
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
-            String alistsort =String.join(",",alist);
+            String alistsort = (String) String.join(",", (CharSequence) arrayList);
             StringBuffer sb=new StringBuffer();
             /*for(String s : anagram){
                 sb.append(s);
