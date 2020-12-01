@@ -32,10 +32,9 @@ public class Anagram {
 
             while (itr.hasMoreTokens()) {
                 String word = itr.nextToken().replace(',', ' ');
-                for (String sword : stopwords) {
-                    String wordc = word.toLowerCase();
-                    if (stopwords.contains(wordc)) {
-                        listOfWords.add(sword);
+                String wordc = word.toLowerCase();
+                if (!stopwords.contains(wordc)) {
+                    listOfWords.add(wordc);
                     }
                 }
                 for (String newword : listOfWords) {
@@ -46,7 +45,7 @@ public class Anagram {
                 }
             }
         }
-    }
+
 
     public static class AnagramAggregatorReducer
             extends Reducer<Text, Text, Text, Text> {
