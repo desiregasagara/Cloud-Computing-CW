@@ -44,15 +44,25 @@ public class Anagram {
         ) throws IOException, InterruptedException {
             // Collection<Text> anagrams = new HashSet<Text>();
             Text anagramlist=new Text();
-            ArrayList<String> anagram = new ArrayList<String>();
-
+            ArrayList<String>anagram = new ArrayList<String>();
+            ArrayList<ArrayList<String>> arrayList= new ArrayList<ArrayList<String>>();
             for (Text val : values) {
-                anagram.add(val.toString() +(","));
+
+                anagram.add(val.toString());
+                arrayList.add(anagram);
+                Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
+                            @Override
+                            public int compare(ArrayList<String> o1, ArrayList<String> o2) {
+                                return o1.get(0).compareTo(o2.get(0));
+                            }
+            });
             }
+
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
+            String alistsort =String.join(",",alist);
             if(newtoken.countTokens()>=2) {
-                anagramlist.set(alist);
+                anagramlist.set(alistsort);
                 context.write(key,anagramlist);
 
             }
