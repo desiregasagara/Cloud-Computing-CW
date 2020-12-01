@@ -34,7 +34,7 @@ public class Anagram {
                 String word = itr.nextToken().replace(',', ' ');
                 for (String sword : stopwords) {
                     String wordc = word.toLowerCase();
-                    if (!stopwords.contains(wordc)) {
+                    if (stopwords.contains(wordc)) {
                         listOfWords.add(sword);
                     }
                 }
