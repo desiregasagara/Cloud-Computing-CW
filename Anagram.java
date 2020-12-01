@@ -55,23 +55,24 @@ public class Anagram {
             // Collection<Text> anagrams = new HashSet<Text>();
             Text anagramlist=new Text();
             ArrayList<String>anagram = new ArrayList<String>();
-            ArrayList<ArrayList<String>> arrayList= new ArrayList<ArrayList<String>>();
+           // ArrayList<ArrayList<String>> arrayList= new ArrayList<ArrayList<String>>();
             for (Text val : values) {
 
                 anagram.add(val.toString());
-                arrayList.add(anagram);
-                Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
+                //arrayList.add(anagram);
+                /*Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
                             @Override
                             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
                                 return o1.get(0).compareTo(o2.get(0));
 
                             }
             });
+            */
             }
-
+            Collections.sort(anagram);
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
-            String alistsort = (String) String.join(",", (CharSequence) arrayList);
+           // String alistsort = String.join(",", arrayList);
             StringBuffer sb=new StringBuffer();
             /*for(String s : anagram){
                 sb.append(s);
@@ -81,7 +82,7 @@ public class Anagram {
             */
 
             if(newtoken.countTokens()>=2) {
-                anagramlist.set(alistsort);
+                anagramlist.set(alist);
                 context.write(key,anagramlist);
 
             }
