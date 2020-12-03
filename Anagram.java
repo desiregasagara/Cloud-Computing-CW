@@ -60,16 +60,16 @@ public class Anagram {
 
     public static class AnagramAggregatorReducer
             extends Reducer<Text, Text, Text, Text> {
-        Text anagramlist=new Text();
-        ArrayList<String>anagram = new ArrayList<String>();
-        Set<Text> uniques = new HashSet<Text>();
-        int size=0;
+
         ArrayList<String> arrayList= new ArrayList<String>();
         public void reduce(Text key, Iterable<Text> values,
                            Context context
         ) throws IOException, InterruptedException {
             // Collection<Text> anagrams = new HashSet<Text>();
-
+            Text anagramlist=new Text();
+            ArrayList<String>anagram = new ArrayList<String>();
+            Set<Text> uniques = new HashSet<Text>();
+            int size=0;
             for (Text val : values) {
                 if (uniques.add(val)) {
                     size++;
@@ -90,12 +90,12 @@ public class Anagram {
             String alist = String.join(",",anagram);
            // arrayList.add(alist);
 
-                String alistsort = String.join(",",arrayList);
-                if (newtoken.countTokens() >= 2) {
-                    anagramlist.set(alist);
-                    context.write(key, anagramlist);
+                //String alistsort = String.join(",",arrayList);
+            if (newtoken.countTokens() >= 2) {
+                anagramlist.set(alist);
+                context.write(key, anagramlist);
 
-                }}
+            }}
 
 
             StringBuffer sb=new StringBuffer();
@@ -110,14 +110,15 @@ public class Anagram {
             // anagrams.add(val);
 
 
-        @Override
-        protected void cleanup(
+        
+        /*protected void cleanup(
                 Reducer<Text, Text, Text, Text>.Context context)
                 throws IOException, InterruptedException {
 
                     //Collections.sort(arrayList);
 
-            };
+            }
+            */
         }
 
 
