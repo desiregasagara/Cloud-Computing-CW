@@ -84,9 +84,17 @@ public class Anagram {
             }
             arrayList.add(anagram);
             Collections.sort(anagram);
-            //StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
-            //String alist = String.join(",",anagram);
-           // String alistsort = String.join(",", arrayList);
+            StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
+            String alist = String.join(",",anagram);
+            for(Object o : arrayList) {
+                String alistsort = String.join(",",o.toString());
+                if (newtoken.countTokens() >= 2) {
+                    anagramlist.set(alistsort);
+                    context.write(key, anagramlist);
+
+                }}
+
+            }
             StringBuffer sb=new StringBuffer();
             /*for(String s : anagram){
                 sb.append(s);
@@ -94,20 +102,10 @@ public class Anagram {
             }
             String str =sb.toString();
             */
-            for (Object o :arrayList) {
-                StringTokenizer newtoken=new StringTokenizer(o.toString(),",");
-                String alist = String.join(",",o.toString());
-
-
-            if (newtoken.countTokens() >= 2) {
-                anagramlist.set(alist);
-                context.write(key, anagramlist);
-
-            }
 
 
             // anagrams.add(val);
-        }}
+        }
         /*
         @Override
         protected void cleanup(
@@ -121,11 +119,10 @@ public class Anagram {
 
                         }
 
-                    });
 
             }
             */
-    }
+
 
 
 
