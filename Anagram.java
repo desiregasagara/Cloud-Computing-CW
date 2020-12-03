@@ -43,7 +43,7 @@ public class Anagram {
             }
         }
 
-    public static class Combiner extends org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text> {
+  /*  public static class Combiner extends org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text> {
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Set<Text> uniques = new HashSet<Text>();
             for (Text value : values) {
@@ -55,7 +55,7 @@ public class Anagram {
         }
 
     }
-
+    */
 
 
     public static class AnagramAggregatorReducer
@@ -110,7 +110,7 @@ public class Anagram {
             // anagrams.add(val);
 
 
-        
+
         /*protected void cleanup(
                 Reducer<Text, Text, Text, Text>.Context context)
                 throws IOException, InterruptedException {
@@ -129,7 +129,7 @@ public class Anagram {
         Job job = Job.getInstance(conf, "anagram");
         job.setJarByClass(Anagram.class);
         job.setMapperClass(AnagramMakerMapper.class);
-        job.setCombinerClass(Combiner.class);
+       // job.setCombinerClass(Combiner.class);
         job.setReducerClass(AnagramAggregatorReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
