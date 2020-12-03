@@ -92,7 +92,7 @@ public class Anagram {
 
                 String alistsort = String.join(",",arrayList);
                 if (newtoken.countTokens() >= 2) {
-                    anagramlist.set(alistsort);
+                    anagramlist.set(alist);
                     context.write(key, anagramlist);
 
                 }}
