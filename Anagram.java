@@ -97,16 +97,18 @@ public class Anagram {
             for (Object o :arrayList) {
                 StringTokenizer newtoken=new StringTokenizer(o.toString(),",");
                 String alist = String.join(",",o.toString());
-                if (newtoken.countTokens() >= 2) {
-                    anagramlist.set(alist);
-                    context.write(key, anagramlist);
 
-                }
+
+            if (newtoken.countTokens() >= 2) {
+                anagramlist.set(alist);
+                context.write(key, anagramlist);
+
             }
 
 
             // anagrams.add(val);
-        }
+        }}
+        /*
         @Override
         protected void cleanup(
                 Reducer<Text, Text, Text, Text>.Context context)
@@ -122,6 +124,7 @@ public class Anagram {
                     });
 
             }
+            */
     }
 
 
