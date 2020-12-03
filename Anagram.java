@@ -88,7 +88,7 @@ public class Anagram {
             Collections.sort(anagram);
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
-            arrayList.add(alist);
+           // arrayList.add(alist);
 
                 String alistsort = String.join(",",arrayList);
                 if (newtoken.countTokens() >= 2) {
@@ -115,7 +115,7 @@ public class Anagram {
                 Reducer<Text, Text, Text, Text>.Context context)
                 throws IOException, InterruptedException {
 
-                    Collections.sort(arrayList);
+                    //Collections.sort(arrayList);
 
             };
         }
