@@ -5,10 +5,7 @@ import java.util.*;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -46,20 +43,36 @@ public class Anagram {
             }
         }
 
+    public static class Combiner extends org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text> {
+        protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            Set<Text> uniques = new HashSet<Text>();
+            for (Text value : values) {
+                if (uniques.add(value)) {
+                    context.write(key, value);
+                }
+            }
+        }
+    }
+
+
 
     public static class AnagramAggregatorReducer
             extends Reducer<Text, Text, Text, Text> {
+        Text anagramlist=new Text();
+        ArrayList<String>anagram = new ArrayList<String>();
+        Set<Text> uniques = new HashSet<Text>();
+        int size=0;
+        ArrayList<ArrayList<String>> arrayList= new ArrayList<ArrayList<String>>();
         public void reduce(Text key, Iterable<Text> values,
                            Context context
         ) throws IOException, InterruptedException {
             // Collection<Text> anagrams = new HashSet<Text>();
-            Text anagramlist=new Text();
-            ArrayList<String>anagram = new ArrayList<String>();
-           // ArrayList<ArrayList<String>> arrayList= new ArrayList<ArrayList<String>>();
-            for (Text val : values) {
 
+            for (Text val : values) {
+                if (uniques.add(val)) {
+                    size++;
+                }
                 anagram.add(val.toString());
-                //arrayList.add(anagram);
                 /*Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
                             @Override
                             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
@@ -69,9 +82,10 @@ public class Anagram {
             });
             */
             }
+            arrayList.add(anagram);
             Collections.sort(anagram);
-            StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
-            String alist = String.join(",",anagram);
+            //StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
+            //String alist = String.join(",",anagram);
            // String alistsort = String.join(",", arrayList);
             StringBuffer sb=new StringBuffer();
             /*for(String s : anagram){
@@ -80,22 +94,44 @@ public class Anagram {
             }
             String str =sb.toString();
             */
+            for (Object o :arrayList) {
+                StringTokenizer newtoken=new StringTokenizer(o.toString(),",");
+                String alist = String.join(",",o.toString());
+                if (newtoken.countTokens() >= 2) {
+                    anagramlist.set(alist);
+                    context.write(key, anagramlist);
 
-            if(newtoken.countTokens()>=2) {
-                anagramlist.set(alist);
-                context.write(key,anagramlist);
-
+                }
             }
+
 
             // anagrams.add(val);
         }
+        @Override
+        protected void cleanup(
+                Reducer<Text, Text, Text, Text>.Context context)
+                throws IOException, InterruptedException {
+
+                    Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
+                        @Override
+                        public int compare(ArrayList<String> o1, ArrayList<String> o2) {
+                            return o1.get(0).compareTo(o2.get(0));
+
+                        }
+
+                    });
+
+            }
     }
+
+
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "anagram");
         job.setJarByClass(Anagram.class);
         job.setMapperClass(AnagramMakerMapper.class);
+        job.setCombinerClass(Combiner.class);
         job.setReducerClass(AnagramAggregatorReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
