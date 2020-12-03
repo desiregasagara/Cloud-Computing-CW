@@ -22,19 +22,23 @@ public class Anagram {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
+            //Array list of Stop Words
             ArrayList<String> stopwords =new ArrayList<String>(Arrays.asList("'tis","'twas","a","able","about","across","after","ain't","all","almost","also","am","among","an","and","any","are","aren't","as","at","be","because","been","but","by","can","can't","cannot","could","could've","couldn't","dear","did","didn't","do","does","doesn't","don't","either","else","ever","every","for","from","get","got","had","has","hasn't","have","he","he'd","he'll","he's","her","hers","him","his","how","how'd","how'll","how's","however","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","just","least","let","like","likely","may","me","might","might've","mightn't","most","must","must've","mustn't","my","neither","no","nor","not","of","off","often","on","only","or","other","our","own","rather","said","say","says","shan't","she","she'd","she'll","she's","should","should've","shouldn't","since","so","some","than","that","that'll","that's","the","their","them","then","there","there's","these","they","they'd","they'll","they're","they've","this","tis","to","too","twas","us","wants","was","wasn't","we","we'd","we'll","we're","were","weren't","what","what'd","what's","when","when","when'd","when'll","when's","where","where'd","where'll","where's","which","while","who","who'd","who'll","who's","whom","why","why'd","why'll","why's","will","with","won't","would","would've","wouldn't","yet","you","you'd","you'll","you're","you've","your"));
             ArrayList<String> listOfWords = new ArrayList<String>();
-            Text wText =new Text();
+
             StringTokenizer itr = new StringTokenizer(value.toString());
 
             while (itr.hasMoreTokens()) {
                 String word = itr.nextToken().replace(',', ' ');
                 String wordc = word.toLowerCase();
+                //Filters out Stop Words
                 if (!stopwords.contains(wordc)) {
                     listOfWords.add(wordc);
                     }
                 }
+
                 for (String newword : listOfWords) {
+                    //Goes through array of words without stopwords
                     char[] arr = newword.toCharArray();
                     Arrays.sort(arr);
                     String wordKey = new String(arr);
@@ -44,6 +48,7 @@ public class Anagram {
         }
 
     public static class Combiner extends org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text> {
+       //Takes out NonUnique Anagrams( Repeated Words)
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Set<Text> uniques = new HashSet<Text>();
             for (Text value : values) {
@@ -74,6 +79,7 @@ public class Anagram {
                 if (uniques.add(val)) {
                     size++;
                 }
+
                 anagram.add(val.toString());
                 /*Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
                             @Override
@@ -85,12 +91,14 @@ public class Anagram {
             */
             }
 
+            //Sorts Anagrams within value list
             Collections.sort(anagram);
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
            // arrayList.add(alist);
 
                 //String alistsort = String.join(",",arrayList);
+            //Makes sure words have more than 2 Anagrams
             if (newtoken.countTokens() >= 2) {
                 anagramlist.set(alist);
                 context.write(key, anagramlist);
@@ -111,14 +119,14 @@ public class Anagram {
 
 
 
-        /*protected void cleanup(
+        protected void cleanup(
                 Reducer<Text, Text, Text, Text>.Context context)
                 throws IOException, InterruptedException {
 
                     //Collections.sort(arrayList);
 
             }
-            */
+
         }
 
 
@@ -129,7 +137,7 @@ public class Anagram {
         Job job = Job.getInstance(conf, "anagram");
         job.setJarByClass(Anagram.class);
         job.setMapperClass(AnagramMakerMapper.class);
-       // job.setCombinerClass(Combiner.class);
+        job.setCombinerClass(Combiner.class);
         job.setReducerClass(AnagramAggregatorReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
