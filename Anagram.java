@@ -43,7 +43,7 @@ public class Anagram {
             }
         }
 
-    /*public static class Combiner extends org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text> {
+    public static class Combiner extends org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text> {
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Set<Text> uniques = new HashSet<Text>();
             for (Text value : values) {
@@ -55,7 +55,7 @@ public class Anagram {
         }
 
     }
-*/
+
 
 
     public static class AnagramAggregatorReducer
@@ -64,7 +64,7 @@ public class Anagram {
         ArrayList<String>anagram = new ArrayList<String>();
         Set<Text> uniques = new HashSet<Text>();
         int size=0;
-        ArrayList<ArrayList<String>> arrayList= new ArrayList<ArrayList<String>>();
+        ArrayList<String> arrayList= new ArrayList<String>();
         public void reduce(Text key, Iterable<Text> values,
                            Context context
         ) throws IOException, InterruptedException {
@@ -84,19 +84,20 @@ public class Anagram {
             });
             */
             }
-            arrayList.add(anagram);
+
             Collections.sort(anagram);
             StringTokenizer newtoken=new StringTokenizer(anagram.toString(),",");
             String alist = String.join(",",anagram);
-            for(Object o : arrayList) {
-                String alistsort = String.join(",",o.toString());
+            arrayList.add(alist);
+
+                String alistsort = String.join(",",arrayList);
                 if (newtoken.countTokens() >= 2) {
                     anagramlist.set(alistsort);
                     context.write(key, anagramlist);
 
                 }}
 
-            }
+
             StringBuffer sb=new StringBuffer();
             /*for(String s : anagram){
                 sb.append(s);
@@ -107,23 +108,17 @@ public class Anagram {
 
 
             // anagrams.add(val);
-        }
-        /*
+
+
         @Override
         protected void cleanup(
                 Reducer<Text, Text, Text, Text>.Context context)
                 throws IOException, InterruptedException {
 
-                    Collections.sort(arrayList, new Comparator<ArrayList<String>>() {
-                        @Override
-                        public int compare(ArrayList<String> o1, ArrayList<String> o2) {
-                            return o1.get(0).compareTo(o2.get(0));
+                    Collections.sort(arrayList);
 
-                        }
-
-
-            }
-            */
+            };
+        }
 
 
 
@@ -133,7 +128,7 @@ public class Anagram {
         Job job = Job.getInstance(conf, "anagram");
         job.setJarByClass(Anagram.class);
         job.setMapperClass(AnagramMakerMapper.class);
-        //job.setCombinerClass(Combiner.class);
+        job.setCombinerClass(Combiner.class);
         job.setReducerClass(AnagramAggregatorReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
